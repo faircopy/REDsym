@@ -91,7 +91,7 @@ Build image based on Dockerfile found in the current directory: `sudo docker bui
 
 Copy the `settings.py` file, e.g. `mkdir conf && cp REDsym/settings.py conf/` and edit it. Set `DB_HOST = 'redsym-mariadb'`, this is the name of the MariaDB container. For example:
 
-```
+``` Python
 rootdir_wcd = ''
 
 rootdir_red = '/mnt/music-dl/'
