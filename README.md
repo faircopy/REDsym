@@ -58,7 +58,7 @@ Configure folders, mysql database name/user/pass in "settings.py".
 Create network used for inter-container communication between the database container and the application container:
 
 ```
-sudo docker network create --internal redsym
+docker network create --internal redsym
 ```
 
 ### Database container
@@ -66,13 +66,13 @@ sudo docker network create --internal redsym
 Create a volume to store MariaDB's persistent data:
 
 ```
-sudo docker volume create redsym-mariadb-data
+docker volume create redsym-mariadb-data
 ```
 
 Create the database container:
 
 ```
-sudo docker run --rm -d \
+docker run --rm -d \
 	--name redsym-mariadb \
 	--network redsym \
 	--mount type=volume,src=redsym-mariadb-data,dst=/var/lib/mysql \
@@ -87,11 +87,11 @@ sudo docker run --rm -d \
 
 ### Application container
 
-Build image based on Dockerfile found in the current directory: `sudo docker build --tag redsym .`
+Build image based on Dockerfile found in the current directory: `docker build --tag redsym .`
 
 Copy the `settings.py` file, e.g. `mkdir conf && cp REDsym/settings.py conf/` and edit it. Set `DB_HOST = 'redsym-mariadb'`, this is the name of the MariaDB container. For example:
 
-```
+``` Python
 rootdir_wcd = ''
 
 rootdir_red = '/mnt/music-dl/'
@@ -107,7 +107,7 @@ DB_PASS = 'redsym
 Run an instance of REDsym based on the image we built:
 
 ```
-sudo docker run --rm -it \
+docker run --rm -it \
 	--name redsym \
 	--network redsym \
 	--mount type=bind,src=/mnt/music-dl/,dst=/mnt/music-dl/,readonly \
