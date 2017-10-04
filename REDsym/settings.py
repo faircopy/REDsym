@@ -1,20 +1,14 @@
-### config vars
-
-#WM2 Download folder of old WCD torrents
+# WM2 old WCD download directory.
 rootdir_wcd = ''
 
-#WM2 Download folder of redacted torrents
+# WM2 RED download directory.
 rootdir_red = '/mnt/red/WM2/'
 
-#folder where REDsym will create new directories and symlinks to WM2 folders
-#this folder must be created before running the script
+# REDsym target directory, must exist.
 redsym_dir = '/mnt/redsym/'
 
-#mysql database name and user/pass
-#this DB must be created before running the script
+# MySQL database settings, must run.
 DB_HOST = 'localhost'
 DB_NAME = 'REDsym'
 DB_USER = 'redsym'
 DB_PASS = 'redsym'
-
-# config vars end
