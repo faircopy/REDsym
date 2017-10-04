@@ -1,9 +1,12 @@
 import os
 import re
+from textwrap import dedent
+
+import MySQLdb
 import ujson
 from collections import defaultdict
 from ftfy import fix_text
-import MySQLdb
+
 import REDsym.util
 import REDsym.settings
 
@@ -17,340 +20,361 @@ DB_USER = REDsym.settings.DB_USER
 DB_PASS = REDsym.settings.DB_PASS
 
 
-# for future reference wcd vs red
-
 release_type_table = {
-    8 : 19,
-    22 : 18,
-    23 : 17
-    }
+    8: 19,
+    22: 18,
+    23: 17,
+}
+
 release_type_word = {
-    1 : "Album",
-    3 : "Soundtrack",
-    5 : "EP",
-    6 : "Anthology",
-    7 : "Compilation",
-    8 : "DJ Mix",
-    9 : "Single",
-    11 : "Live Album",
-    13 : "Remix",
-    14 : "Bootleg",
-    15 : "Interview",
-    16 : "Mixtape",
-    21 : "Unknown",
-    22 : "Concert Recording",
-    23 : "Demo"
-    }
+    1: 'Album',
+    3: 'Soundtrack',
+    5: 'EP',
+    6: 'Anthology',
+    7: 'Compilation',
+    8: 'DJ Mix',
+    9: 'Single',
+    11: 'Live Album',
+    13: 'Remix',
+    14: 'Bootleg',
+    15: 'Interview',
+    16: 'Mixtape',
+    21: 'Unknown',
+    22: 'Concert Recording',
+    23: 'Demo',
+}
 
 musicInfo_group_type_table = {
-    1 : "artists",
-    2 : "with",
-    3 : "remixedBy",
-    4 : "composers",
-    5 : "conductor",
-    6 : "dj",
-    7 : "producer"
-    }
+    1: 'artists',
+    2: 'with',
+    3: 'remixedBy',
+    4: 'composers',
+    5: 'conductor',
+    6: 'dj',
+    7: 'producer',
+}
 
 torrent_table = {
-    "id" : "TorrentId"
-    }
+    'id': 'TorrentId',
+}
+
 group_table = {
-    "id" : "TorrentGroupId"
-    }
+    'id': 'TorrentGroupId',
+}
 
 artist_table = {
-    "id" : "ArtistId"
-    }
+    'id': 'ArtistId',
+}
+
 
 def create_DB():
 
-
     TABLES_RED = {}
 
-    TABLES_RED['Artists_RED'] = (
-        "CREATE TABLE `Artists_RED` ("
-        "  `ArtistId` int(11),"
-        "  `name` varchar(2048),"
-        "  `notificationsEnabled` TINYINT(1),"
-        "  `image` varchar(2048),"
-        "  `hasBookmarked` TINYINT(1),"
-        "  `body` TEXT,"
-        "  `vanityHouse` TINYINT(1),"
-        "  `statistics` varchar(2048),"
-        "  `Parsed` TINYINT(1) DEFAULT  '0',"
-        "  PRIMARY KEY (`ArtistId`)"
-        ") ENGINE=InnoDB CHARSET utf8mb4")
+    TABLES_RED['Artists_RED'] = dedent('''\
+        CREATE TABLE `Artists_RED` (
+          `ArtistId` int(11),
+          `name` varchar(2048),
+          `notificationsEnabled` TINYINT(1),
+          `image` varchar(2048),
+          `hasBookmarked` TINYINT(1),
+          `body` TEXT,
+          `vanityHouse` TINYINT(1),
+          `statistics` varchar(2048),
+          `Parsed` TINYINT(1) DEFAULT  '0',
+          PRIMARY KEY (`ArtistId`)
+        ) ENGINE=InnoDB CHARSET utf8mb4
+        '''
 
-    TABLES_RED['AlbumsArtists_RED'] = (
-        "CREATE TABLE `AlbumsArtists_RED` ("
-        "  `ArtistId` int(11) NOT NULL,"
-        "  `TorrentGroupId` int(11) NOT NULL,"
-        "  `musicInfo` varchar(191),"
-        "  UNIQUE KEY `AlbumsArtists_TOTALindex_RED` (`ArtistId`, `TorrentGroupId`, `musicInfo`), KEY AlbumsArtists_indexGroupId_RED (`TorrentGroupId`)"
-        ") ENGINE=InnoDB CHARSET utf8mb4")
+    TABLES_RED['AlbumsArtists_RED'] = dedent('''\
+        CREATE TABLE `AlbumsArtists_RED` (
+          `ArtistId` int(11) NOT NULL,
+          `TorrentGroupId` int(11) NOT NULL,
+          `musicInfo` varchar(191),
+          UNIQUE KEY `AlbumsArtists_TOTALindex_RED` (`ArtistId`, `TorrentGroupId`, `musicInfo`),
+          KEY AlbumsArtists_indexGroupId_RED (`TorrentGroupId`)
+        ) ENGINE=InnoDB CHARSET utf8mb4
+        '''
 
+    TABLES_RED['AlbumsTorrents_RED'] = dedent('''\
+        CREATE TABLE `AlbumsTorrents_RED` (
+          `TorrentId` int(11) NOT NULL,
+          `TorrentGroupId` int(11) NOT NULL,
+          `media` varchar(255),
+          `format` varchar(255),
+          `encoding` varchar(255),
+          `remasterYear` varchar(255),
+          `remastered` varchar(255),
+          `remasterTitle` varchar(255),
+          `remasterRecordLabel` varchar(255),
+          `scene` TINYINT(1),
+          `hasLog` TINYINT(1),
+          `hasCue` TINYINT(1),
+          `logScore` int(6),
+          `fileCount` int(6),
+          `freeTorrent`  TINYINT(1),
+          `size` bigint(12),
+          `time` varchar(255),
+          `hasFile` bigint(12),
+          `description` text,
+          `leechers` int(6),
+          `seeders` int(6),
+          `snatched` int(10),
+          `reported` TINYINT(1),
+          `infoHash` varchar(191),
+          `fileAlbumImage` varchar(255),
+          `pathAlbumImage` varchar(255),
+          `hasSnatched` TINYINT(1),
+          `hasUploaded` TINYINT(1),
+          `fileList`  mediumtext,
+          `filePath` varchar(255),
+          `dir` varchar(191),
+          `album_path` varchar(255),
+          `datafolder` varchar(255),
+          `userId` varchar(255),
+          `username` varchar(255),
+          `remasterCatalogueNumber` varchar(255),
+          PRIMARY KEY (`TorrentId`),
+          UNIQUE KEY `AlbumsTorrents_index_RED` (`TorrentGroupId`, `TorrentId`),
+          KEY AlbumsTorrents_hash_RED (`infoHash`),
+          KEY AlbumsTorrents_hasSnatched_RED (`hasSnatched`),
+          KEY AlbumsTorrents_dir_RED (`dir`)
+        ) ENGINE=InnoDB CHARSET utf8mb4
+        '''
 
-    TABLES_RED['AlbumsTorrents_RED'] = (
-        "CREATE TABLE `AlbumsTorrents_RED` ("
-        "  `TorrentId` int(11) NOT NULL,"
-        "  `TorrentGroupId` int(11) NOT NULL,"
-        "  `media` varchar(255),"
-        "  `format` varchar(255),"
-        "  `encoding` varchar(255),"
-        "  `remasterYear` varchar(255),"
-        "  `remastered` varchar(255),"
-        "  `remasterTitle` varchar(255),"
-        "  `remasterRecordLabel` varchar(255),"
-        "  `scene` TINYINT(1),"
-        "  `hasLog` TINYINT(1),"
-        "  `hasCue` TINYINT(1),"
-        "  `logScore` int(6),"
-        "  `fileCount` int(6),"
-        "  `freeTorrent`  TINYINT(1),"
-        "  `size` bigint(12),"
-        "  `time` varchar(255),"
-        "  `hasFile` bigint(12),"
-        "  `description` text,"
-        "  `leechers` int(6),"
-        "  `seeders` int(6),"
-        "  `snatched` int(10),"
-        "  `reported` TINYINT(1),"
-        "  `infoHash` varchar(191),"
-        "  `fileAlbumImage` varchar(255),"
-        "  `pathAlbumImage` varchar(255),"
-        "  `hasSnatched` TINYINT(1),"
-        "  `hasUploaded` TINYINT(1),"
-        "  `fileList`  mediumtext,"
-        "  `filePath` varchar(255),"
-        "  `dir` varchar(191),"
-        "  `album_path` varchar(255),"
-        "  `datafolder` varchar(255),"
-        "  `userId` varchar(255),"
-        "  `username` varchar(255),"
-        "  `remasterCatalogueNumber` varchar(255),"
-        "  PRIMARY KEY (`TorrentId`), UNIQUE KEY `AlbumsTorrents_index_RED` (`TorrentGroupId`, `TorrentId`), KEY AlbumsTorrents_hash_RED (`infoHash`), KEY AlbumsTorrents_hasSnatched_RED (`hasSnatched`), KEY AlbumsTorrents_dir_RED (`dir`)"
-        ") ENGINE=InnoDB CHARSET utf8mb4")
+    TABLES_RED['AlbumsTorrents_RED_linked'] = dedent('''\
+        CREATE TABLE `AlbumsTorrents_RED_linked` (
+         `id` MEDIUMINT NOT NULL AUTO_INCREMENT,
+          `dir` varchar(512),
+          `symlink` varchar(512),
+          PRIMARY KEY (`id`)
+        ) ENGINE=InnoDB CHARSET utf8mb4
+        '''
 
+    TABLES_RED['Albums_RED'] = dedent('''\
+        CREATE TABLE `Albums_RED` (
+          `TorrentGroupId` int(11) NOT NULL,
+          `name` varchar(255),
+          `wikiBody` text,
+          `wikiImage` varchar(255),
+          `year` int(4),
+          `recordLabel` varchar(255),
+          `catalogueNumber` varchar(255),
+          `releaseType` tinyint(2),
+          `isBookmarked` tinyint(1),
+          `time` varchar(255),
+          `vanityHouse` tinyint(1),
+          `categoryId` tinyint(2),
+          `categoryName` varchar(255),
+          PRIMARY KEY (`TorrentGroupId`)
+        ) ENGINE=InnoDB CHARSET utf8mb4
+        '''
 
-    TABLES_RED['AlbumsTorrents_RED_linked'] = (
-        "CREATE TABLE `AlbumsTorrents_RED_linked` ("
-        " `id` MEDIUMINT NOT NULL AUTO_INCREMENT,"
-        "  `dir` varchar(512),"
-        "  `symlink` varchar(512),"
-        "  PRIMARY KEY (`id`)"
-        ") ENGINE=InnoDB CHARSET utf8mb4")
+    TABLES_RED['AlbumsTags_RED'] = dedent('''\
+        CREATE TABLE `AlbumsTags_RED` (
+          `TorrentGroupId` int(11) NOT NULL,
+          `tags` varchar(191),
+          UNIQUE KEY `AlbumsTags_index_RED` (`TorrentGroupId`, `tags`)
+        ) ENGINE=InnoDB CHARSET utf8mb4
+        '''
 
+    TABLES_RED['Collages_RED'] = dedent('''\
+        CREATE TABLE `Collages_RED` (
+          `CollageId` int(11) NOT NULL,
+          `CollageName` varchar(2048),
+          `CollageDescription` TEXT,
+          `CollageDeleted` TINYINT(1),
+          `CollageCategoryID` TINYINT(2),
+          `CollageCategoryName` varchar(2048),
+          `CollageLocked` TINYINT(1),
+          `CollagehasBookmarked` TINYINT(1),
+          `CollagehasSubscriberCount` int(10),
+          `ParsedCollage` TINYINT(1) DEFAULT  '0',
+          PRIMARY KEY (`CollageId`)
+        ) ENGINE=InnoDB CHARSET utf8mb4
+        '''
 
-    TABLES_RED['Albums_RED'] = (
-        "CREATE TABLE `Albums_RED` ("
-        "  `TorrentGroupId` int(11) NOT NULL,"
-        "  `name` varchar(255),"
-        "  `wikiBody` text,"
-        "  `wikiImage` varchar(255),"
-        "  `year` int(4),"
-        "  `recordLabel` varchar(255),"
-        "  `catalogueNumber` varchar(255),"
-        "  `releaseType` tinyint(2),"
-        "  `isBookmarked` tinyint(1),"
-        "  `time` varchar(255),"
-        "  `vanityHouse` tinyint(1),"
-        "  `categoryId` tinyint(2),"
-        "  `categoryName` varchar(255),"
-        "  PRIMARY KEY (`TorrentGroupId`)"
-        ") ENGINE=InnoDB CHARSET utf8mb4")
-
-    TABLES_RED['AlbumsTags_RED'] = (
-        "CREATE TABLE `AlbumsTags_RED` ("
-        "  `TorrentGroupId` int(11) NOT NULL,"
-        "  `tags` varchar(191),"
-        "  UNIQUE KEY `AlbumsTags_index_RED` (`TorrentGroupId`, `tags`)"
-        ") ENGINE=InnoDB CHARSET utf8mb4")
-
-    TABLES_RED['Collages_RED'] = (
-        "CREATE TABLE `Collages_RED` ("
-        "  `CollageId` int(11) NOT NULL,"
-        "  `CollageName` varchar(2048),"
-        "  `CollageDescription` TEXT,"
-        "  `CollageDeleted` TINYINT(1),"
-        "  `CollageCategoryID` TINYINT(2),"
-        "  `CollageCategoryName` varchar(2048),"
-        "  `CollageLocked` TINYINT(1),"
-        "  `CollagehasBookmarked` TINYINT(1),"
-        "  `CollagehasSubscriberCount` int(10),"
-        "  `ParsedCollage` TINYINT(1) DEFAULT  '0',"
-        "  PRIMARY KEY (`CollageId`)"
-        ") ENGINE=InnoDB CHARSET utf8mb4")
-
-    TABLES_RED['CollageAlbum_RED'] = (
-        "CREATE TABLE `CollageAlbum_RED` ("
-        "  `CollageId` int(11) NOT NULL,"
-        "  `TorrentGroupId` int(11) NOT NULL,"
-        "  UNIQUE KEY `CollageAlbum_TOTALindex_RED` (`CollageId`, `TorrentGroupId`), KEY Collage_TorrentGroupId_RED (`TorrentGroupId`)"
-        ") ENGINE=InnoDB CHARSET utf8mb4")
-
-
-
-
+    TABLES_RED['CollageAlbum_RED'] = dedent('''\
+        CREATE TABLE `CollageAlbum_RED` (
+          `CollageId` int(11) NOT NULL,
+          `TorrentGroupId` int(11) NOT NULL,
+          UNIQUE KEY `CollageAlbum_TOTALindex_RED` (`CollageId`, `TorrentGroupId`),
+          KEY Collage_TorrentGroupId_RED (`TorrentGroupId`)
+        ) ENGINE=InnoDB CHARSET utf8mb4
+        '''
 
     TABLES_WCD = {}
 
-    TABLES_WCD['Artists_WCD'] = (
-        "CREATE TABLE `Artists_WCD` ("
-        "  `ArtistId` int(11),"
-        "  `name` varchar(2048),"
-        "  `notificationsEnabled` TINYINT(1),"
-        "  `image` varchar(2048),"
-        "  `hasBookmarked` TINYINT(1),"
-        "  `body` TEXT,"
-        "  `vanityHouse` TINYINT(1),"
-        "  `statistics` varchar(2048),"
-        "  `Parsed` TINYINT(1) DEFAULT  '0',"
-        "  PRIMARY KEY (`ArtistId`)"
-        ") ENGINE=InnoDB CHARSET utf8mb4")
+    TABLES_WCD['Artists_WCD'] = dedent('''\
+        CREATE TABLE `Artists_WCD` (
+          `ArtistId` int(11),
+          `name` varchar(2048),
+          `notificationsEnabled` TINYINT(1),
+          `image` varchar(2048),
+          `hasBookmarked` TINYINT(1),
+          `body` TEXT,
+          `vanityHouse` TINYINT(1),
+          `statistics` varchar(2048),
+          `Parsed` TINYINT(1) DEFAULT  '0',
+          PRIMARY KEY (`ArtistId`)
+        ) ENGINE=InnoDB CHARSET utf8mb4
+        '''
 
-    TABLES_WCD['AlbumsArtists_WCD'] = (
-        "CREATE TABLE `AlbumsArtists_WCD` ("
-        "  `ArtistId` int(11) NOT NULL,"
-        "  `TorrentGroupId` int(11) NOT NULL,"
-        "  `musicInfo` varchar(191),"
-        "  UNIQUE KEY `AlbumsArtists_TOTALindex_WCD` (`ArtistId`, `TorrentGroupId`, `musicInfo`), KEY AlbumsArtists_indexGroupId_WCD (`TorrentGroupId`)"
-        ") ENGINE=InnoDB CHARSET utf8mb4")
+    TABLES_WCD['AlbumsArtists_WCD'] = dedent('''\
+        CREATE TABLE `AlbumsArtists_WCD` (
+          `ArtistId` int(11) NOT NULL,
+          `TorrentGroupId` int(11) NOT NULL,
+          `musicInfo` varchar(191),
+          UNIQUE KEY `AlbumsArtists_TOTALindex_WCD` (`ArtistId`, `TorrentGroupId`, `musicInfo`),
+          KEY AlbumsArtists_indexGroupId_WCD (`TorrentGroupId`)
+        ) ENGINE=InnoDB CHARSET utf8mb4
+        '''
 
+    TABLES_WCD['AlbumsTorrents_WCD'] = dedent('''\
+        CREATE TABLE `AlbumsTorrents_WCD` (
+          `TorrentId` int(11) NOT NULL,
+          `TorrentGroupId` int(11) NOT NULL,
+          `media` varchar(255),
+          `format` varchar(255),
+          `encoding` varchar(255),
+          `remasterYear` varchar(255),
+          `remastered` varchar(255),
+          `remasterTitle` varchar(255),
+          `remasterRecordLabel` varchar(255),
+          `scene` TINYINT(1),
+          `hasLog` TINYINT(1),
+          `hasCue` TINYINT(1),
+          `logScore` int(6),
+          `fileCount` int(6),
+          `freeTorrent`  TINYINT(1),
+          `size` bigint(12),
+          `time` varchar(255),
+          `hasFile` bigint(12),
+          `description` text,
+          `leechers` int(6),
+          `seeders` int(6),
+          `snatched` int(10),
+          `reported` TINYINT(1),
+          `infoHash` varchar(191),
+          `fileAlbumImage` varchar(255),
+          `pathAlbumImage` varchar(255),
+          `hasSnatched` TINYINT(1),
+          `hasUploaded` TINYINT(1),
+          `fileList`  mediumtext,
+          `filePath` varchar(255),
+          `dir` varchar(191),
+          `album_path` varchar(255),
+          `datafolder` varchar(255),
+          `userId` varchar(255),
+          `username` varchar(255),
+          `remasterCatalogueNumber` varchar(255),
+          PRIMARY KEY (`TorrentId`),
+          UNIQUE KEY `AlbumsTorrents_index_WCD` (`TorrentGroupId`, `TorrentId`),
+          KEY AlbumsTorrents_hash_WCD (`infoHash`),
+          KEY AlbumsTorrents_hasSnatched_WCD (`hasSnatched`),
+          KEY AlbumsTorrents_dir_WCD (`dir`)
+        ) ENGINE=InnoDB CHARSET utf8mb4
+        '''
 
-    TABLES_WCD['AlbumsTorrents_WCD'] = (
-        "CREATE TABLE `AlbumsTorrents_WCD` ("
-        "  `TorrentId` int(11) NOT NULL,"
-        "  `TorrentGroupId` int(11) NOT NULL,"
-        "  `media` varchar(255),"
-        "  `format` varchar(255),"
-        "  `encoding` varchar(255),"
-        "  `remasterYear` varchar(255),"
-        "  `remastered` varchar(255),"
-        "  `remasterTitle` varchar(255),"
-        "  `remasterRecordLabel` varchar(255),"
-        "  `scene` TINYINT(1),"
-        "  `hasLog` TINYINT(1),"
-        "  `hasCue` TINYINT(1),"
-        "  `logScore` int(6),"
-        "  `fileCount` int(6),"
-        "  `freeTorrent`  TINYINT(1),"
-        "  `size` bigint(12),"
-        "  `time` varchar(255),"
-        "  `hasFile` bigint(12),"
-        "  `description` text,"
-        "  `leechers` int(6),"
-        "  `seeders` int(6),"
-        "  `snatched` int(10),"
-        "  `reported` TINYINT(1),"
-        "  `infoHash` varchar(191),"
-        "  `fileAlbumImage` varchar(255),"
-        "  `pathAlbumImage` varchar(255),"
-        "  `hasSnatched` TINYINT(1),"
-        "  `hasUploaded` TINYINT(1),"
-        "  `fileList`  mediumtext,"
-        "  `filePath` varchar(255),"
-        "  `dir` varchar(191),"
-        "  `album_path` varchar(255),"
-        "  `datafolder` varchar(255),"
-        "  `userId` varchar(255),"
-        "  `username` varchar(255),"
-        "  `remasterCatalogueNumber` varchar(255),"
-        "  PRIMARY KEY (`TorrentId`), UNIQUE KEY `AlbumsTorrents_index_WCD` (`TorrentGroupId`, `TorrentId`), KEY AlbumsTorrents_hash_WCD (`infoHash`), KEY AlbumsTorrents_hasSnatched_WCD (`hasSnatched`), KEY AlbumsTorrents_dir_WCD (`dir`)"
-        ") ENGINE=InnoDB CHARSET utf8mb4")
+    TABLES_WCD['AlbumsTorrents_WCD_linked'] = dedent('''\
+        CREATE TABLE `AlbumsTorrents_WCD_linked` (
+         `id` MEDIUMINT NOT NULL AUTO_INCREMENT,
+          `dir` varchar(512),
+          `symlink` varchar(512),
+          PRIMARY KEY (`id`)
+        ) ENGINE=InnoDB CHARSET utf8mb4
+        '''
 
+    TABLES_WCD['Albums_WCD'] = dedent('''\
+        CREATE TABLE `Albums_WCD` (
+          `TorrentGroupId` int(11) NOT NULL,
+          `name` varchar(255),
+          `wikiBody` text,
+          `wikiImage` varchar(255),
+          `year` int(4),
+          `recordLabel` varchar(255),
+          `catalogueNumber` varchar(255),
+          `releaseType` tinyint(2),
+          `isBookmarked` tinyint(1),
+          `time` varchar(255),
+          `vanityHouse` tinyint(1),
+          `categoryId` tinyint(2),
+          `categoryName` varchar(255),
+          PRIMARY KEY (`TorrentGroupId`)
+        ) ENGINE=InnoDB CHARSET utf8mb4
+        '''
 
-    TABLES_WCD['AlbumsTorrents_WCD_linked'] = (
-        "CREATE TABLE `AlbumsTorrents_WCD_linked` ("
-        " `id` MEDIUMINT NOT NULL AUTO_INCREMENT,"
-        "  `dir` varchar(512),"
-        "  `symlink` varchar(512),"
-        "  PRIMARY KEY (`id`)"
-        ") ENGINE=InnoDB CHARSET utf8mb4")
+    TABLES_WCD['AlbumsTags_WCD'] = dedent('''\
+        CREATE TABLE `AlbumsTags_WCD` (
+          `TorrentGroupId` int(11) NOT NULL,
+          `tags` varchar(191),
+          UNIQUE KEY `AlbumsTags_index_WCD` (`TorrentGroupId`, `tags`)
+        ) ENGINE=InnoDB CHARSET utf8mb4
+        '''
 
-    TABLES_WCD['Albums_WCD'] = (
-        "CREATE TABLE `Albums_WCD` ("
-        "  `TorrentGroupId` int(11) NOT NULL,"
-        "  `name` varchar(255),"
-        "  `wikiBody` text,"
-        "  `wikiImage` varchar(255),"
-        "  `year` int(4),"
-        "  `recordLabel` varchar(255),"
-        "  `catalogueNumber` varchar(255),"
-        "  `releaseType` tinyint(2),"
-        "  `isBookmarked` tinyint(1),"
-        "  `time` varchar(255),"
-        "  `vanityHouse` tinyint(1),"
-        "  `categoryId` tinyint(2),"
-        "  `categoryName` varchar(255),"
-        "  PRIMARY KEY (`TorrentGroupId`)"
-        ") ENGINE=InnoDB CHARSET utf8mb4")
+    TABLES_WCD['Collages_WCD'] = dedent('''\
+        CREATE TABLE `Collages_WCD` (
+          `CollageId` int(11) NOT NULL,
+          `CollageName` varchar(2048),
+          `CollageDescription` TEXT,
+          `CollageDeleted` TINYINT(1),
+          `CollageCategoryID` TINYINT(2),
+          `CollageCategoryName` varchar(2048),
+          `CollageLocked` TINYINT(1),
+          `CollagehasBookmarked` TINYINT(1),
+          `CollagehasSubscriberCount` int(10),
+          `ParsedCollage` TINYINT(1) DEFAULT  '0',
+          PRIMARY KEY (`CollageId`)
+        ) ENGINE=InnoDB CHARSET utf8mb4
+        '''
 
-    TABLES_WCD['AlbumsTags_WCD'] = (
-        "CREATE TABLE `AlbumsTags_WCD` ("
-        "  `TorrentGroupId` int(11) NOT NULL,"
-        "  `tags` varchar(191),"
-        "  UNIQUE KEY `AlbumsTags_index_WCD` (`TorrentGroupId`, `tags`)"
-        ") ENGINE=InnoDB CHARSET utf8mb4")
+    TABLES_WCD['CollageAlbum_WCD'] = dedent('''\
+        CREATE TABLE `CollageAlbum_WCD` (
+          `CollageId` int(11) NOT NULL,
+          `TorrentGroupId` int(11) NOT NULL,
+          UNIQUE KEY `CollageAlbum_TOTALindex_WCD` (`CollageId`, `TorrentGroupId`),
+          KEY Collage_TorrentGroupId_WCD (`TorrentGroupId`)
+        ) ENGINE=InnoDB CHARSET utf8mb4
+        '''
 
-    TABLES_WCD['Collages_WCD'] = (
-        "CREATE TABLE `Collages_WCD` ("
-        "  `CollageId` int(11) NOT NULL,"
-        "  `CollageName` varchar(2048),"
-        "  `CollageDescription` TEXT,"
-        "  `CollageDeleted` TINYINT(1),"
-        "  `CollageCategoryID` TINYINT(2),"
-        "  `CollageCategoryName` varchar(2048),"
-        "  `CollageLocked` TINYINT(1),"
-        "  `CollagehasBookmarked` TINYINT(1),"
-        "  `CollagehasSubscriberCount` int(10),"
-        "  `ParsedCollage` TINYINT(1) DEFAULT  '0',"
-        "  PRIMARY KEY (`CollageId`)"
-        ") ENGINE=InnoDB CHARSET utf8mb4")
-
-    TABLES_WCD['CollageAlbum_WCD'] = (
-        "CREATE TABLE `CollageAlbum_WCD` ("
-        "  `CollageId` int(11) NOT NULL,"
-        "  `TorrentGroupId` int(11) NOT NULL,"
-        "  UNIQUE KEY `CollageAlbum_TOTALindex_WCD` (`CollageId`, `TorrentGroupId`), KEY Collage_TorrentGroupId_WCD (`TorrentGroupId`)"
-        ") ENGINE=InnoDB CHARSET utf8mb4")
-
-
-    indexdb = MySQLdb.connect(user=DB_USER, passwd=DB_PASS, host=DB_HOST, db=DB_NAME, charset='utf8mb4', use_unicode=True)
+    indexdb = MySQLdb.connect(
+        user=DB_USER, passwd=DB_PASS, host=DB_HOST, db=DB_NAME,
+        charset='utf8mb4', use_unicode=True)
     indexdbc = indexdb.cursor()
-    indexdbc.execute("""set session transaction isolation level READ COMMITTED""")
+    indexdbc.execute('set session transaction isolation level READ COMMITTED')
 
-    list_of_tables = [TABLES_WCD, TABLES_RED ]
+    list_of_tables = [TABLES_WCD, TABLES_RED]
 
     try:
         indexdb.database = DB_NAME
     except MySQLdb.Error as e:
         try:
-            print ("MySQL Error [%d]: %s" % (e.args[0], e.args[1]))
+            print ('MySQL Error [%d]: %s' % (e.args[0], e.args[1]))
         except IndexError:
-            print ("MySQL Error: %s" % str(e))
+            print ('MySQL Error: %s' % str(e))
 
-    for TABLES     in list_of_tables:
+    for TABLES in list_of_tables:
         for name, ddl in TABLES.items():
-
             try:
                 #print("Creating table {}: " + (str(create_DB)))
                 indexdbc.execute(ddl)
-            except MySQLdb.Error as  e:
-                if e.args[0]!= 1050:
-                    print ("MySQL Error [%d]: %s" % (e.args[0], e.args[1]))
-
+            except MySQLdb.Error as e:
+                if e.args[0] != 1050:
+                    print("MySQL Error [%d]: %s" % (e.args[0], e.args[1]))
 
     indexdb.commit()
     indexdbc.close()
     indexdb.close()
 
+
 class DBase:
 
-    dsn = (DB_HOST,DB_USER,DB_PASS,DB_NAME)
+    dsn = (DB_HOST, DB_USER, DB_PASS, DB_NAME)
 
     def __init__(self):
-        self.conn = MySQLdb.connect(user=DB_USER, passwd=DB_PASS, host=DB_HOST, db=DB_NAME, charset='utf8mb4', use_unicode=True)
+        self.conn = MySQLdb.connect(
+            user=DB_USER, passwd=DB_PASS, host=DB_HOST, db=DB_NAME,
+            charset='utf8mb4', use_unicode=True)
         self.cur = self.conn.cursor()
 
     def __enter__(self):
@@ -360,28 +384,25 @@ class DBase:
         if self.conn:
             self.conn.close()
 
-
-
     def get_wm2_dir_RED(self):
-
         sql = 'SELECT dir FROM AlbumsTorrents_RED WHERE 1'
         self.cur.execute(sql)
-        groupid_select_RED=[r[0] for r in self.cur.fetchall()]
-
-        return  groupid_select_RED
+        groupid_select_RED = [r[0] for r in self.cur.fetchall()]
+        return groupid_select_RED
 
     def get_wm2_dir_WCD(self):
         sql = 'SELECT dir FROM AlbumsTorrents_WCD WHERE 1'
         self.cur.execute(sql)
-        groupid_select_WCD=[r[0] for r in self.cur.fetchall()]
-
-
+        groupid_select_WCD = [r[0] for r in self.cur.fetchall()]
         return groupid_select_WCD
 
-
-
-    def get_meta_from_dir_WCD(self, dir ):
-        sql ="SELECT at.format, at.remasterYear, at.remastered, at.remasterTitle, at.dir, at.filePath, at.remasterCatalogueNumber, at.fileList, a.name, a.year, at.TorrentGroupId, at.TorrentId FROM AlbumsTorrents_WCD AS at JOIN Albums_WCD AS a ON at.TorrentGroupId=a.TorrentGroupId WHERE dir = %s"
+    def get_meta_from_dir_WCD(self, dir):
+        sql = dedent('''\
+            SELECT at.format, at.remasterYear, at.remastered, at.remasterTitle,
+            at.dir, at.filePath, at.remasterCatalogueNumber, at.fileList,
+            a.name, a.year, at.TorrentGroupId, at.TorrentId
+            FROM AlbumsTorrents_WCD AS at JOIN Albums_WCD AS a
+            ON at.TorrentGroupId=a.TorrentGroupId WHERE dir = %s''')
 
         self.cur.execute(sql, (dir,))
 
@@ -414,12 +435,13 @@ class DBase:
 
         return (groupid_select_meta_album )
 
-
-
-
-
     def get_meta_from_dir_RED(self, dir ):
-        sql ="SELECT at.format, at.remasterYear, at.remastered, at.remasterTitle, at.dir, at.filePath, at.remasterCatalogueNumber, at.fileList, a.name, a.year, at.TorrentGroupId, at.TorrentId FROM AlbumsTorrents_RED AS at JOIN Albums_RED AS a ON at.TorrentGroupId=a.TorrentGroupId WHERE dir = %s"
+        sql = dedent('''\
+            SELECT at.format, at.remasterYear, at.remastered, at.remasterTitle,
+            at.dir, at.filePath, at.remasterCatalogueNumber, at.fileList,
+            a.name, a.year, at.TorrentGroupId, at.TorrentId
+            FROM AlbumsTorrents_RED AS at JOIN Albums_RED AS a
+            ON at.TorrentGroupId=a.TorrentGroupId WHERE dir = %s''')
 
         self.cur.execute(sql, (dir,))
 

@@ -1,8 +1,7 @@
-# vim: set ts=4 sw=4 tw=79 et :
-
-import sys
 import os
 import os.path
+import sys
+
 import REDsym.bigtable
 
 
