@@ -5,7 +5,7 @@
 import sys
 import os
 import os.path
-import REDsym.bigtable 
+import REDsym.bigtable
 
 
 def filenamefy(value):
@@ -26,16 +26,16 @@ def audio_dir_filename_wcd_wm2(dir):
         album_name = '(' +  str(audio_info_wm2['year']) + ') '  + audio_info_wm2['name']
     else:
         album_name = audio_info_wm2['name']
-    
+
     if audio_info_wm2['remasterTitle'] !='':
         album_name = album_name + ' (' +  audio_info_wm2['remasterTitle'] + ') '
-   
+
     if audio_info_wm2['remasterCatalogueNumber'] !='':
         album_name = album_name + ' (' +  audio_info_wm2['remasterCatalogueNumber'] + ') '
 
     album_name = album_name + ' [' + audio_info_wm2['format'] + ']'
 
-    
+
     #detect classical or jazz
     if any("classical" in s for s in audio_info_wm2['tags']):
         classical = 1
@@ -98,7 +98,7 @@ def audio_dir_filename_wcd_wm2(dir):
         for key, value in audio_info_wm2['musicInfo'].items():
             if value:
                 artist_name = ', '.join(value)
-    
+
     elif jazz:
         if 'artists' in audio_info_wm2['musicInfo']:
             if len(audio_info_wm2['musicInfo']['artists'])==1:
@@ -151,16 +151,16 @@ def audio_dir_filename_red_wm2(dir):
         album_name = '(' +  str(audio_info_wm2['year']) + ') '  + audio_info_wm2['name']
     else:
         album_name = audio_info_wm2['name']
-    
+
     if audio_info_wm2['remasterTitle'] !='':
         album_name = album_name + ' (' +  audio_info_wm2['remasterTitle'] + ') '
-   
+
     if audio_info_wm2['remasterCatalogueNumber'] !='':
         album_name = album_name + ' (' +  audio_info_wm2['remasterCatalogueNumber'] + ') '
 
     album_name = album_name + ' [' + audio_info_wm2['format'] + ']'
 
-    
+
     #detect classical or jazz
     if any("classical" in s for s in audio_info_wm2['tags']):
         classical = 1
@@ -223,7 +223,7 @@ def audio_dir_filename_red_wm2(dir):
         for key, value in audio_info_wm2['musicInfo'].items():
             if value:
                 artist_name = ', '.join(value)
-    
+
     elif jazz:
         if 'artists' in audio_info_wm2['musicInfo']:
             if len(audio_info_wm2['musicInfo']['artists'])==1:
@@ -267,11 +267,11 @@ def audio_dir_filename_red_wm2(dir):
 
 
 def get_music_dir(dir):
-    
+
     def get_immediate_subdirectories(a_dir):
         return [name for name in os.listdir(a_dir) if os.path.isdir(os.path.join(a_dir, name))]
 
-    
+
     def media_in_directory(directory):
         items = os.listdir(directory)
 
@@ -293,10 +293,10 @@ def get_music_dir(dir):
         return len(newlist)
 
 
-    
+
     sub_directory = get_immediate_subdirectories(dir)
 
-    
+
     if len(sub_directory) == 0:
 
         sub_directory = ""
@@ -327,4 +327,3 @@ def is_surrogate_escaped(s):
             return True
         raise
     return False
-

@@ -1,7 +1,7 @@
 ### config vars
 
 #WM2 Download folder of old WCD torrents
-rootdir_wcd = '' 
+rootdir_wcd = ''
 
 #WM2 Download folder of redacted torrents
 rootdir_red = '/mnt/red/WM2/'

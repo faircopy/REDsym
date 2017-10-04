@@ -4,7 +4,7 @@ REDsym uses existing metadata saved by Whatmanager2 (https://github.com/karamano
 
 It uses the ReleaseInfo2.txt files to extract: artists names, album name, year, codec, Catalogue number... and create the mirrored structure.
 
-REDsym does not modify or delete any of the source files or folders to be symlinked.  
+REDsym does not modify or delete any of the source files or folders to be symlinked.
 
 It turns this structure:
 
@@ -22,10 +22,10 @@ $ tree ~/redsym/
 .
 ├── The Doors
 	├── (1967) The Doors (40th Anniversary Edition)  (WPCR-12716)  [FLAC]
-	├── (1971) L.A. Woman (40th Anniversary Edition)  (WPCR-12721)  [MP3] 
+	├── (1971) L.A. Woman (40th Anniversary Edition)  (WPCR-12721)  [MP3]
 	├── (1971) L.A. Woman (5.1 Surround 24-88.2)  (CAPP 75011 SA)  [FLAC]
-	├── (1971) L.A. Woman (62612-9)  [FLAC] 
-	└── (1971) L.A. Woman (62612-9)  [MP3] 
+	├── (1971) L.A. Woman (62612-9)  [FLAC]
+	└── (1971) L.A. Woman (62612-9)  [MP3]
 ├── The Dream Syndicate
 ├── The Drift
 └── [...etc...]

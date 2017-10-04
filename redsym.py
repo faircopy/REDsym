@@ -9,4 +9,4 @@ import regex
 import REDsym.actions
 
 if sys.argv[1] == "update":
-	REDsym.actions.update_wm2()
+    REDsym.actions.update_wm2()
