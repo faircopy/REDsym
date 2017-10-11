@@ -84,7 +84,7 @@ def create_DB():
           `Parsed` TINYINT(1) DEFAULT '0',
           PRIMARY KEY (`ArtistId`)
         ) ENGINE=InnoDB CHARSET utf8mb4
-        '''
+        ''')
 
     TABLES_RED['AlbumsArtists_RED'] = dedent('''\
         CREATE TABLE `AlbumsArtists_RED` (
@@ -95,7 +95,7 @@ def create_DB():
             `ArtistId`, `TorrentGroupId`, `musicInfo`),
           KEY AlbumsArtists_indexGroupId_RED (`TorrentGroupId`)
         ) ENGINE=InnoDB CHARSET utf8mb4
-        '''
+        ''')
 
     TABLES_RED['AlbumsTorrents_RED'] = dedent('''\
         CREATE TABLE `AlbumsTorrents_RED` (
@@ -141,7 +141,7 @@ def create_DB():
           KEY AlbumsTorrents_hasSnatched_RED (`hasSnatched`),
           KEY AlbumsTorrents_dir_RED (`dir`)
         ) ENGINE=InnoDB CHARSET utf8mb4
-        '''
+        ''')
 
     TABLES_RED['AlbumsTorrents_RED_linked'] = dedent('''\
         CREATE TABLE `AlbumsTorrents_RED_linked` (
@@ -150,7 +150,7 @@ def create_DB():
           `symlink` varchar(512),
           PRIMARY KEY (`id`)
         ) ENGINE=InnoDB CHARSET utf8mb4
-        '''
+        ''')
 
     TABLES_RED['Albums_RED'] = dedent('''\
         CREATE TABLE `Albums_RED` (
@@ -169,7 +169,7 @@ def create_DB():
           `categoryName` varchar(255),
           PRIMARY KEY (`TorrentGroupId`)
         ) ENGINE=InnoDB CHARSET utf8mb4
-        '''
+        ''')
 
     TABLES_RED['AlbumsTags_RED'] = dedent('''\
         CREATE TABLE `AlbumsTags_RED` (
@@ -177,7 +177,7 @@ def create_DB():
           `tags` varchar(191),
           UNIQUE KEY `AlbumsTags_index_RED` (`TorrentGroupId`, `tags`)
         ) ENGINE=InnoDB CHARSET utf8mb4
-        '''
+        ''')
 
     TABLES_RED['Collages_RED'] = dedent('''\
         CREATE TABLE `Collages_RED` (
@@ -193,7 +193,7 @@ def create_DB():
           `ParsedCollage` TINYINT(1) DEFAULT '0',
           PRIMARY KEY (`CollageId`)
         ) ENGINE=InnoDB CHARSET utf8mb4
-        '''
+        ''')
 
     TABLES_RED['CollageAlbum_RED'] = dedent('''\
         CREATE TABLE `CollageAlbum_RED` (
@@ -203,7 +203,7 @@ def create_DB():
             `CollageId`, `TorrentGroupId`),
           KEY Collage_TorrentGroupId_RED (`TorrentGroupId`)
         ) ENGINE=InnoDB CHARSET utf8mb4
-        '''
+        ''')
 
     TABLES_WCD = {}
 
@@ -220,7 +220,7 @@ def create_DB():
           `Parsed` TINYINT(1) DEFAULT '0',
           PRIMARY KEY (`ArtistId`)
         ) ENGINE=InnoDB CHARSET utf8mb4
-        '''
+        ''')
 
     TABLES_WCD['AlbumsArtists_WCD'] = dedent('''\
         CREATE TABLE `AlbumsArtists_WCD` (
@@ -231,7 +231,7 @@ def create_DB():
             `ArtistId`, `TorrentGroupId`, `musicInfo`),
           KEY AlbumsArtists_indexGroupId_WCD (`TorrentGroupId`)
         ) ENGINE=InnoDB CHARSET utf8mb4
-        '''
+        ''')
 
     TABLES_WCD['AlbumsTorrents_WCD'] = dedent('''\
         CREATE TABLE `AlbumsTorrents_WCD` (
@@ -277,7 +277,7 @@ def create_DB():
           KEY AlbumsTorrents_hasSnatched_WCD (`hasSnatched`),
           KEY AlbumsTorrents_dir_WCD (`dir`)
         ) ENGINE=InnoDB CHARSET utf8mb4
-        '''
+        ''')
 
     TABLES_WCD['AlbumsTorrents_WCD_linked'] = dedent('''\
         CREATE TABLE `AlbumsTorrents_WCD_linked` (
@@ -286,7 +286,7 @@ def create_DB():
           `symlink` varchar(512),
           PRIMARY KEY (`id`)
         ) ENGINE=InnoDB CHARSET utf8mb4
-        '''
+        ''')
 
     TABLES_WCD['Albums_WCD'] = dedent('''\
         CREATE TABLE `Albums_WCD` (
@@ -305,7 +305,7 @@ def create_DB():
           `categoryName` varchar(255),
           PRIMARY KEY (`TorrentGroupId`)
         ) ENGINE=InnoDB CHARSET utf8mb4
-        '''
+        ''')
 
     TABLES_WCD['AlbumsTags_WCD'] = dedent('''\
         CREATE TABLE `AlbumsTags_WCD` (
@@ -313,7 +313,7 @@ def create_DB():
           `tags` varchar(191),
           UNIQUE KEY `AlbumsTags_index_WCD` (`TorrentGroupId`, `tags`)
         ) ENGINE=InnoDB CHARSET utf8mb4
-        '''
+        ''')
 
     TABLES_WCD['Collages_WCD'] = dedent('''\
         CREATE TABLE `Collages_WCD` (
@@ -329,7 +329,7 @@ def create_DB():
           `ParsedCollage` TINYINT(1) DEFAULT '0',
           PRIMARY KEY (`CollageId`)
         ) ENGINE=InnoDB CHARSET utf8mb4
-        '''
+        ''')
 
     TABLES_WCD['CollageAlbum_WCD'] = dedent('''\
         CREATE TABLE `CollageAlbum_WCD` (
@@ -339,7 +339,7 @@ def create_DB():
             `CollageId`, `TorrentGroupId`),
           KEY Collage_TorrentGroupId_WCD (`TorrentGroupId`)
         ) ENGINE=InnoDB CHARSET utf8mb4
-        '''
+        ''')
 
     indexdb = MySQLdb.connect(
         user=DB_USER, passwd=DB_PASS, host=DB_HOST, db=DB_NAME,
@@ -360,7 +360,7 @@ def create_DB():
     for TABLES in list_of_tables:
         for name, ddl in TABLES.items():
             try:
-                #print('Creating table {}: ' + (str(create_DB)))
+                #print('Creating table:', str(create_DB))
                 indexdbc.execute(ddl)
             except MySQLdb.Error as e:
                 if e.args[0] != 1050:
@@ -438,7 +438,7 @@ class DBase:
                      ''')
         groupid = groupid_select_meta_album.get('TorrentGroupId')
         self.cur.execute(sql, (groupid,))
-        groupid_select_meta_artist=[r for r in self.cur.fetchall()]
+        groupid_select_meta_artist = [r for r in self.cur.fetchall()]
 
         #from list of tuples to dict
 
@@ -494,7 +494,7 @@ class DBase:
                      ''')
         groupid = groupid_select_meta_album.get('TorrentGroupId')
         self.cur.execute(sql, (groupid,))
-        groupid_select_meta_artist=[r for r in self.cur.fetchall()]
+        groupid_select_meta_artist = [r for r in self.cur.fetchall()]
 
         #from list of tuples to dict
 
@@ -506,7 +506,7 @@ class DBase:
 
         sql = 'SELECT tags FROM AlbumsTags_RED WHERE TorrentGroupId = %s'
         self.cur.execute(sql, (groupid,) )
-        groupid_select_meta_tags=[r[0] for r in self.cur.fetchall()]
+        groupid_select_meta_tags = [r[0] for r in self.cur.fetchall()]
 
         groupid_select_meta_album['tags'] = groupid_select_meta_tags
 
@@ -519,7 +519,7 @@ class DBase:
 
             sql = 'SELECT TorrentGroupId FROM AlbumsTorrents_WCD WHERE TorrentId=%s'
             self.cur.execute(sql, (torrentid,))
-            groupid_select=[r[0] for r in self.cur.fetchall()]
+            groupid_select = [r[0] for r in self.cur.fetchall()]
             if groupid_select != []:
                 groupid = groupid_select[0]
             else:
@@ -531,11 +531,13 @@ class DBase:
             self.conn.commit()
 
             if groupid:
-                sql = 'SELECT TorrentId FROM AlbumsTorrents_WCD WHERE TorrentGroupId=%s'
+                sql = 'SELECT TorrentId FROM AlbumsTorrents_WCD' \
+                      'WHERE TorrentGroupId=%s'
                 self.cur.execute(sql, (groupid,))
-                torrentid_select=[r[0] for r in self.cur.fetchall()]
+                torrentid_select = [r[0] for r in self.cur.fetchall()]
                 if torrentid_select == []:
-                    sql1 = 'DELETE FROM AlbumsArtists_WCD WHERE TorrentGroupId=%s'
+                    sql1 = 'DELETE FROM AlbumsArtists_WCD' \
+                           'WHERE TorrentGroupId=%s'
                     sql2 = 'DELETE FROM AlbumsTags_WCD WHERE TorrentGroupId=%s'
                     sql3 = 'DELETE FROM Albums_WCD WHERE TorrentGroupId=%s'
                     self.cur.execute(sql1, (groupid,))
@@ -546,7 +548,7 @@ class DBase:
         if dir:
             sql = 'SELECT TorrentGroupId FROM AlbumsTorrents_WCD WHERE dir=%s'
             self.cur.execute(sql, (dir,))
-            groupid_select=[r[0] for r in self.cur.fetchall()]
+            groupid_select = [r[0] for r in self.cur.fetchall()]
             if groupid_select != []:
                 groupid = groupid_select[0]
             else:
@@ -556,11 +558,13 @@ class DBase:
             self.cur.execute(sql, (dir,))
             self.conn.commit()
             if groupid:
-                sql = 'SELECT TorrentId FROM AlbumsTorrents_WCD WHERE TorrentGroupId=%s'
+                sql = 'SELECT TorrentId FROM AlbumsTorrents_WCD' \
+                      'WHERE TorrentGroupId=%s'
                 self.cur.execute(sql, (groupid,))
-                torrentid_select=[r[0] for r in self.cur.fetchall()]
+                torrentid_select = [r[0] for r in self.cur.fetchall()]
                 if torrentid_select == []:
-                    sql1 = 'DELETE FROM AlbumsArtists_WCD WHERE TorrentGroupId=%s'
+                    sql1 = 'DELETE FROM AlbumsArtists_WCD' \
+                           'WHERE TorrentGroupId=%s'
                     sql2 = 'DELETE FROM AlbumsTags_WCD WHERE TorrentGroupId=%s'
                     sql3 = 'DELETE FROM Albums_WCD WHERE TorrentGroupId=%s'
                     self.cur.execute(sql1, (groupid,))
@@ -569,9 +573,10 @@ class DBase:
                     self.conn.commit()
 
         if album_path:
-            sql = 'SELECT TorrentGroupId FROM AlbumsTorrents_WCD WHERE album_path=%s'
+            sql = 'SELECT TorrentGroupId FROM AlbumsTorrents_WCD' \
+                  'WHERE album_path=%s'
             self.cur.execute(sql, (album_path,))
-            groupid_select=[r[0] for r in self.cur.fetchall()]
+            groupid_select = [r[0] for r in self.cur.fetchall()]
             if groupid_select != []:
                 groupid = groupid_select[0]
             else:
@@ -583,11 +588,13 @@ class DBase:
             self.conn.commit()
 
             if groupid:
-                sql = 'SELECT TorrentId FROM AlbumsTorrents_WCD WHERE TorrentGroupId=%s'
+                sql = 'SELECT TorrentId FROM AlbumsTorrents_WCD' \ 
+                      'WHERE TorrentGroupId=%s'
                 self.cur.execute(sql, (groupid,))
-                torrentid_select=[r[0] for r in self.cur.fetchall()]
+                torrentid_select = [r[0] for r in self.cur.fetchall()]
                 if torrentid_select == []:
-                    sql1 = 'DELETE FROM AlbumsArtists_WCD WHERE TorrentGroupId=%s'
+                    sql1 = 'DELETE FROM AlbumsArtists_WCD' \
+                           'WHERE TorrentGroupId=%s'
                     sql2 = 'DELETE FROM AlbumsTags_WCD WHERE TorrentGroupId=%s'
                     sql3 = 'DELETE FROM Albums_WCD WHERE TorrentGroupId=%s'
                     self.cur.execute(sql1, (groupid,))
@@ -602,9 +609,10 @@ class DBase:
 
         if torrentid:
 
-            sql = 'SELECT TorrentGroupId FROM AlbumsTorrents_RED WHERE TorrentId=%s'
+            sql = 'SELECT TorrentGroupId FROM AlbumsTorrents_RED' \
+                  'WHERE TorrentId=%s'
             self.cur.execute(sql, (torrentid,))
-            groupid_select=[r[0] for r in self.cur.fetchall()]
+            groupid_select = [r[0] for r in self.cur.fetchall()]
             if groupid_select != []:
                 groupid = groupid_select[0]
             else:
@@ -616,11 +624,13 @@ class DBase:
             self.conn.commit()
 
             if groupid:
-                sql = 'SELECT TorrentId FROM AlbumsTorrents_RED WHERE TorrentGroupId=%s'
+                sql = 'SELECT TorrentId FROM AlbumsTorrents_RED' \
+                      'WHERE TorrentGroupId=%s'
                 self.cur.execute(sql, (groupid,))
-                torrentid_select=[r[0] for r in self.cur.fetchall()]
+                torrentid_select = [r[0] for r in self.cur.fetchall()]
                 if torrentid_select == []:
-                    sql1 = 'DELETE FROM AlbumsArtists_RED WHERE TorrentGroupId=%s'
+                    sql1 = 'DELETE FROM AlbumsArtists_RED' \
+                           'WHERE TorrentGroupId=%s'
                     sql2 = 'DELETE FROM AlbumsTags_RED WHERE TorrentGroupId=%s'
                     sql3 = 'DELETE FROM Albums_RED WHERE TorrentGroupId=%s'
                     self.cur.execute(sql1, (groupid,))
@@ -631,7 +641,7 @@ class DBase:
         if dir:
             sql = 'SELECT TorrentGroupId FROM AlbumsTorrents_RED WHERE dir=%s'
             self.cur.execute(sql, (dir,))
-            groupid_select=[r[0] for r in self.cur.fetchall()]
+            groupid_select = [r[0] for r in self.cur.fetchall()]
             if groupid_select != []:
                 groupid = groupid_select[0]
             else:
@@ -642,11 +652,13 @@ class DBase:
             self.cur.execute(sql, (dir,))
             self.conn.commit()
             if groupid:
-                sql = 'SELECT TorrentId FROM AlbumsTorrents_RED WHERE TorrentGroupId=%s'
+                sql = 'SELECT TorrentId FROM AlbumsTorrents_RED' \
+                      'WHERE TorrentGroupId=%s'
                 self.cur.execute(sql, (groupid,))
-                torrentid_select=[r[0] for r in self.cur.fetchall()]
+                torrentid_select = [r[0] for r in self.cur.fetchall()]
                 if torrentid_select == []:
-                    sql1 = 'DELETE FROM AlbumsArtists_RED WHERE TorrentGroupId=%s'
+                    sql1 = 'DELETE FROM AlbumsArtists_RED' \
+                           'WHERE TorrentGroupId=%s'
                     sql2 = 'DELETE FROM AlbumsTags_RED WHERE TorrentGroupId=%s'
                     sql3 = 'DELETE FROM Albums_RED WHERE TorrentGroupId=%s'
                     self.cur.execute(sql1, (groupid,))
@@ -655,9 +667,10 @@ class DBase:
                     self.conn.commit()
 
         if album_path:
-            sql = 'SELECT TorrentGroupId FROM AlbumsTorrents_RED WHERE album_path=%s'
+            sql = 'SELECT TorrentGroupId FROM AlbumsTorrents_RED' \
+                  'WHERE album_path=%s'
             self.cur.execute(sql, (album_path,))
-            groupid_select=[r[0] for r in self.cur.fetchall()]
+            groupid_select = [r[0] for r in self.cur.fetchall()]
             if groupid_select != []:
                 groupid = groupid_select[0]
             else:
@@ -667,11 +680,13 @@ class DBase:
             self.cur.execute(sql, (album_path,))
             self.conn.commit()
             if groupid:
-                sql = 'SELECT TorrentId FROM AlbumsTorrents_RED WHERE TorrentGroupId=%s'
+                sql = 'SELECT TorrentId FROM AlbumsTorrents_RED' \
+                      'WHERE TorrentGroupId=%s'
                 self.cur.execute(sql, (groupid,))
-                torrentid_select=[r[0] for r in self.cur.fetchall()]
+                torrentid_select = [r[0] for r in self.cur.fetchall()]
                 if torrentid_select == []:
-                    sql1 = 'DELETE FROM AlbumsArtists_RED WHERE TorrentGroupId=%s'
+                    sql1 = 'DELETE FROM AlbumsArtists_RED' \
+                           'WHERE TorrentGroupId=%s'
                     sql2 = 'DELETE FROM AlbumsTags_RED WHERE TorrentGroupId=%s'
                     sql3 = 'DELETE FROM Albums_RED WHERE TorrentGroupId=%s'
                     self.cur.execute(sql1, (groupid,))
@@ -686,13 +701,13 @@ class DBase:
         info_dict['torrent']['TorrentId'] = info_dict['torrent'].pop('id')
         info_dict['group']['TorrentGroupId'] = info_dict['group'].pop('id')
 
-        placeholders_torrent = ', '.join(['%s'] * (len(info_dict['torrent']) +1))
+        placeholders_torrent = ', '.join(['%s'] * (len(info_dict['torrent']) + 1))
         columns_torrent = ', '.join(list(info_dict['torrent'].keys()) + ['TorrentGroupId'])
         sql = 'INSERT IGNORE INTO %s ( %s ) VALUES ( %s )' % ('AlbumsTorrents_WCD', columns_torrent, placeholders_torrent)
         self.cur.execute(sql, list(info_dict['torrent'].values()) + [info_dict['group']['TorrentGroupId']])
 
         #then with group tags
-        values_group_tags = [ (info_dict['group']['TorrentGroupId'], x) for x in info_dict['group']['tags'] ]
+        values_group_tags = [(info_dict['group']['TorrentGroupId'], x) for x in info_dict['group']['tags']]
         placeholders_group_tags = '%s, %s'
         columns_group_tags = 'TorrentGroupId, tags'
         sql = 'INSERT IGNORE INTO %s ( %s ) VALUES ( %s )' % ('AlbumsTags_WCD', columns_group_tags, placeholders_group_tags)
@@ -732,11 +747,11 @@ class DBase:
         self.cur.execute(sql, list(info_dict['torrent'].values()) + [info_dict['group']['TorrentGroupId']])
 
         #then with group tags
-        values_group_tags = [ (info_dict['group']['TorrentGroupId'], x) for x in info_dict['group']['tags'] ]
+        values_group_tags = [(info_dict['group']['TorrentGroupId'], x) for x in info_dict['group']['tags']]
         placeholders_group_tags = '%s, %s'
         columns_group_tags = 'TorrentGroupId, tags'
         sql = 'INSERT IGNORE INTO %s ( %s ) VALUES ( %s )' % ('AlbumsTags_RED', columns_group_tags, placeholders_group_tags)
-        self.cur.executemany(sql, values_group_tags )
+        self.cur.executemany(sql, values_group_tags)
 
         values_group_tags = [(tuple_list[0], dict['id'], info_dict['group']['TorrentGroupId']) for tuple_list in info_dict['group']['musicInfo'].items() for dict in tuple_list[1]]
         placeholders_group_tags = '%s, %s , %s'
@@ -789,23 +804,23 @@ class DBase:
 
         sql = 'SELECT symlink FROM AlbumsTorrents_WCD_linked WHERE dir=%s'
         self.cur.execute(sql, (dir,))
-        groupid_select=[r[0] for r in self.cur.fetchall()]
+        groupid_select = [r[0] for r in self.cur.fetchall()]
         if groupid_select != []:
             groupid = groupid_select[0]
             return groupid
         else:
-            print('can't find simlink in DB for:',dir, 'can't delete it')
+            print("can't find simlink in DB for:", dir, "can't delete it")
             return False
 
     def get_symlink_RED_from_dir(self, dir):
         sql = 'SELECT symlink FROM AlbumsTorrents_RED_linked WHERE dir=%s'
         self.cur.execute(sql, (dir,))
-        groupid_select=[r[0] for r in self.cur.fetchall()]
+        groupid_select = [r[0] for r in self.cur.fetchall()]
         if groupid_select != []:
             groupid = groupid_select[0]
             return groupid
         else:
-            print('can't find simlink in DB for:',dir, 'can't delete it')
+            print("can't find simlink in DB for:", dir, "can't delete it")
             return False
 
 
@@ -825,15 +840,14 @@ def get_new_dir_folders_wcd():
     print('Getting new folders from WCD path')
     database_dir_list = db.get_wm2_dir_WCD()
 
-    for rootdir in [ rootdir_wcd]:
+    for rootdir in [rootdir_wcd]:
         for subdir, dirs, files in os.walk(rootdir):
 
             for file in files:
                 size_folder = get_size(subdir)
-                if file == 'ReleaseInfo2.txt' and size_folder > 10000000 and REDsym.util.get_music_dir (subdir):
+                if file == 'ReleaseInfo2.txt' and size_folder > 10000000 and REDsym.util.get_music_dir(subdir):
                     count += 1
                     current_album_path_list.append( subdir)
-
 
     new_dir_folders = list(set(current_album_path_list).difference(database_dir_list))
 
@@ -847,7 +861,7 @@ def get_deleted_dir_folders_wcd():
     print('Getting deleted folders from WCD path')
     database_dir_list = db.get_wm2_dir_WCD()
 
-    for rootdir in [ rootdir_wcd]:
+    for rootdir in [rootdir_wcd]:
         for subdir, dirs, files in os.walk(rootdir):
 
             for file in files:
@@ -855,7 +869,6 @@ def get_deleted_dir_folders_wcd():
                 if file == 'ReleaseInfo2.txt' and size_folder > 10000000:
                     count += 1
                     current_album_path_list.append( subdir)
-
 
     deleted_dir_folders = list(set(database_dir_list).difference(current_album_path_list))
 
@@ -869,15 +882,14 @@ def get_new_dir_folders_red():
     print('Getting new folders from RED path')
     database_dir_list = db.get_wm2_dir_RED()
 
-    for rootdir in [ rootdir_red]:
+    for rootdir in [rootdir_red]:
         for subdir, dirs, files in os.walk(rootdir):
 
             for file in files:
                 size_folder = get_size(subdir)
-                if file == 'ReleaseInfo2.txt' and size_folder > 10000000 and REDsym.util.get_music_dir (subdir) :
+                if file == 'ReleaseInfo2.txt' and size_folder > 10000000 and REDsym.util.get_music_dir(subdir) :
                     count += 1
                     current_album_path_list.append( subdir)
-
 
     new_dir_folders = list(set(current_album_path_list).difference(database_dir_list))
 
@@ -891,7 +903,7 @@ def get_deleted_dir_folders_red():
     print('Getting deleted folders from RED path')
     database_dir_list = db.get_wm2_dir_RED()
 
-    for rootdir in [ rootdir_red]:
+    for rootdir in [rootdir_red]:
         for subdir, dirs, files in os.walk(rootdir):
 
             for file in files:
@@ -899,7 +911,6 @@ def get_deleted_dir_folders_red():
                 if file == 'ReleaseInfo2.txt' and size_folder > 10000000:
                     count += 1
                     current_album_path_list.append( subdir)
-
 
     deleted_dir_folders = list(set(database_dir_list).difference(current_album_path_list))
 
@@ -918,10 +929,10 @@ def update_bigtable():
     new_dir_folders = new_dir_folders_wcd + new_dir_folders_red
     deleted_dir_folders = deleted_dir_folders_wcd + deleted_dir_folders_red
 
-    new_dir_folders_only_music =[]
+    new_dir_folders_only_music = []
     print('##### START Database update #####')
-    print('There are:', len(new_dir_folders), 'new folders to update in DB\n' )
-    print('There are:', len(deleted_dir_folders), 'folders to delete in DB\n' )
+    print('There are:', len(new_dir_folders), 'new folders to update in DB\n')
+    print('There are:', len(deleted_dir_folders), 'folders to delete in DB\n')
 
     for rootdir in new_dir_folders:
         for subdir, dirs, files in os.walk(rootdir):
@@ -982,4 +993,4 @@ def update_bigtable():
             db.delete_torrent_WCD(False, dir, False)
         if rootdir_red in dir:
             db.delete_torrent_RED(False, dir, False)
-    return (new_dir_folders_only_music, deleted_dir_folders)
+    return new_dir_folders_only_music, deleted_dir_folders
