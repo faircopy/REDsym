@@ -824,15 +824,6 @@ class DBase:
             return False
 
 
-def get_size(start_path):
-    total_size = 0
-    for dirpath, dirnames, filenames in os.walk(start_path):
-        for f in filenames:
-            fp = os.path.join(dirpath, f)
-            total_size += os.path.getsize(fp)
-    return total_size
-
-
 def get_new_dir_folders_wcd():
     count = 0
     current_album_path_list = []
@@ -844,8 +835,7 @@ def get_new_dir_folders_wcd():
         for subdir, dirs, files in os.walk(rootdir):
 
             for file in files:
-                size_folder = get_size(subdir)
-                if file == 'ReleaseInfo2.txt' and size_folder > 10000000 and REDsym.util.get_music_dir(subdir):
+                if file == 'ReleaseInfo2.txt' and REDsym.util.get_music_dir(subdir):
                     count += 1
                     current_album_path_list.append( subdir)
 
@@ -865,8 +855,7 @@ def get_deleted_dir_folders_wcd():
         for subdir, dirs, files in os.walk(rootdir):
 
             for file in files:
-                size_folder = get_size(subdir)
-                if file == 'ReleaseInfo2.txt' and size_folder > 10000000:
+                if file == 'ReleaseInfo2.txt':
                     count += 1
                     current_album_path_list.append( subdir)
 
@@ -886,8 +875,7 @@ def get_new_dir_folders_red():
         for subdir, dirs, files in os.walk(rootdir):
 
             for file in files:
-                size_folder = get_size(subdir)
-                if file == 'ReleaseInfo2.txt' and size_folder > 10000000 and REDsym.util.get_music_dir(subdir) :
+                if file == 'ReleaseInfo2.txt' and REDsym.util.get_music_dir(subdir) :
                     count += 1
                     current_album_path_list.append( subdir)
 
@@ -907,8 +895,7 @@ def get_deleted_dir_folders_red():
         for subdir, dirs, files in os.walk(rootdir):
 
             for file in files:
-                size_folder = get_size(subdir)
-                if file == 'ReleaseInfo2.txt' and size_folder > 10000000:
+                if file == 'ReleaseInfo2.txt':
                     count += 1
                     current_album_path_list.append( subdir)
 
@@ -938,8 +925,7 @@ def update_bigtable():
         for subdir, dirs, files in os.walk(rootdir):
 
             for file in files:
-                size_folder = get_size(subdir)
-                if file == 'ReleaseInfo2.txt' and size_folder > 10000000:
+                if file == 'ReleaseInfo2.txt':
 
                     with open(os.path.join(subdir,file), 'r') as ReleaseInfo:
                         info_dict = ujson.loads(ReleaseInfo.read())
