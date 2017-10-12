@@ -37,7 +37,7 @@ def audio_dir_filename_wcd_wm2(dir):
 
     if len(audio_info_wm2['musicInfo'].values()) == 1:
         for key, value in audio_info_wm2['musicInfo'].items():
-                elif len(value) <= 3:
+                if len(value) <= 3:
                     artist_name = ', '.join(value)
                 elif classical:
                     artist_name = 'Various Classical Artists'
@@ -75,7 +75,7 @@ def audio_dir_filename_wcd_wm2(dir):
             else:
                 artist_name = 'Various Jazz Artists'
         elif 'with' in audio_info_wm2['musicInfo']:
-            elif len(audio_info_wm2['musicInfo']['with']) <= 3:
+            if len(audio_info_wm2['musicInfo']['with']) <= 3:
                 artist_name = ', '.join(audio_info_wm2['musicInfo']['with'])
             else:
                 artist_name = 'Various Jazz Artists'
@@ -87,7 +87,7 @@ def audio_dir_filename_wcd_wm2(dir):
             artist_name = 'Various Artists'
 
     elif 'composers' in audio_info_wm2['musicInfo']:
-        elif len(audio_info_wm2['musicInfo']['composers']) <= 3:
+        if len(audio_info_wm2['musicInfo']['composers']) <= 3:
             artist_name = ', '.join(audio_info_wm2['musicInfo']['composers'])
         else:
             artist_name = 'Various Artists'
@@ -120,7 +120,7 @@ def audio_dir_filename_red_wm2(dir):
 
     if len(audio_info_wm2['musicInfo'].values()) == 1:
         for key, value in audio_info_wm2['musicInfo'].items():
-                elif len(value) <= 3:
+                if len(value) <= 3:
                     artist_name = ', '.join(value)
                 elif classical:
                     artist_name = 'Various Classical Artists'
