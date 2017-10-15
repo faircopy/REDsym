@@ -183,12 +183,16 @@ def get_music_dir(dir):
     def get_immediate_subdirectories(a_dir):
         return [name for name in os.listdir(a_dir) if os.path.isdir(os.path.join(a_dir, name))]
 
+    def is_music_file(filename):
+        for ext in ('flac', 'mp3', 'dts', 'wav', 'm4a', 'ac3'):
+            if filename.lower().endswith('.' + ext):
+                return True
+        return False
+
     def media_in_directory(directory):
         count = 0
-        media_extensions = ('flac', 'mp3', 'dts', 'wav', 'm4a', 'ac3')
         for filename in os.listdir(directory):
-            for ext in media_extensions:
-                if filename.lower().endswith('.' + ext):
+                if is_music_file(filename):
                     count += 1
                     break
         return count
@@ -196,8 +200,9 @@ def get_music_dir(dir):
     def media_in_subdirs(album_path):
         count = 0
         for root, dirs, files in os.walk(album_path):
-            for name in dirs:
-                count += media_in_directory(name)
+            for f in files:
+                if is_music_file(f):
+                    count += 1
         return count
 
     sub_directory = get_immediate_subdirectories(dir)
