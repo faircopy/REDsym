@@ -379,6 +379,7 @@ class DBase:
         self.conn = MySQLdb.connect(
             user=DB_USER, passwd=DB_PASS, host=DB_HOST, db=DB_NAME,
             charset='utf8mb4', use_unicode=True)
+        self.conn.ping(True)
         self.cur = self.conn.cursor()
 
     def __enter__(self):
